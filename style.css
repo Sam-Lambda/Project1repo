@@ -8,7 +8,7 @@
  height: 400px;
  display: flex;
  flex-wrap: wrap;
- background-color: yellow;
+ background-color: black;
 }
 
 .grid div{
@@ -18,7 +18,7 @@
 }
 
 .tetromino {
-    background-color: blue;
+    background-color: grey;
 }
 
 
@@ -28,7 +28,7 @@
     height: 80px;
     display: flex;
     flex-wrap: wrap;
-    background-color: yellow;
+    background-color: black;
 }
 /*what are the differences between these two?*/
 .mini-grid div {

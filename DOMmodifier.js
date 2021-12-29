@@ -26,10 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreDisplay = document.querySelector('#score')
     const startBtn = document.querySelector('#start-button')
     // referencing the variables we made in html body
-    const width = 10 //'nextLine'
-    // we're going to use this as a means of jumping to bigger indexes
-    // when constructing the tetris pieces.
-    let nextRandom = 0
     const grid = document.querySelector('.grid')
     // looks through our html doc and finds the el with classname grid
     // so anything that happens to grid will happen to grid in html file
@@ -40,7 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // the difference between the above two is that one is referencing
     // the divs back on the html, while the other simply turned them into
     // array format, they reference two different objects.
+
+    const width = 10 //'nextLine'
+    // we're going to use this as a means of jumping to bigger indexes
+    // when constructing the tetris pieces.
+    let nextRandom = 0
     let timerId
+    let score = 0
+
 
     //The Tetrominoes
     const lTetromino = [
@@ -148,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             draw()
             displayShape()
             addScore()
+            gameOver()
         }
     }
     // a lot of things here u want to change
@@ -235,8 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // score function
     function addScore() { // there has to be a better way to write this
-        for (i = 0; i < 199; i+= width) {
-            const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
+        for (i = 0; i < 199; i += width) {
+            const row = [i, i + 1, i + 2, i + 3, i + 4, i + 5, i + 6, i + 7, i + 8, i + 9]
             // we will use this to check every row in our grid
             // a tetromino that hits the bottom floor is of taken class
             // every tetromino touching a taken class object becomes a taken class object
@@ -246,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (row.every(index => squares[index].classList.contains('taken'))) {
                 // this checks every index in row for a taken class block
                 // if we have a full row of taken class tetrominos, they must be cleared
-                score+= 10
+                score += 10
                 scoreDisplay.innerHTML = score
                 // the next logical step is to remove the taken tetrominos
                 row.forEach(index => {
@@ -264,7 +268,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
+    function gameOver() {
+        if (current.some(index => squares[currentPosition + index].classlist.contains('taken'))) {
+            scoreDisplay.innerHTML = 'end'
+            clearInterval(timerId)
+        }
+    }
 
 
 
