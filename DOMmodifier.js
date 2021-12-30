@@ -118,14 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Assign functions to keyCodes
     function control(e) {
-        if (e.keyCode === 37) {
+        var key = e.keyCode ? e.keyCode : e.which;
+        // Some browsers use keyCode, others use which.
+        if (key == 37) {
             moveLeft()
-        } else if (e.keyCode === 38) {
+        }
+        if (key == 38) {
             rotate()
-        } else if (e.keyCode === 39) {
+        }
+        if (key == 39) {
             moveRight()
-        } else if (e.keyCode === 40) {
+        }
+        if (key == 40) {
             moveDown()
+        }
+        if (key == 68) {
+            dropDown()
         }
     }
     document.addEventListener('keyup', control) // understand this better
@@ -194,10 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
         draw()
     }
 
+    function dropDown() {
+        undraw() // if it is not taken, drop down more
+        while (!(current.some(index => squares[currentPosition + index + width].classList.contains('taken')))) {
+            moveDown()
+        }
+        draw()
+    }
+
     const displaySquares = document.querySelectorAll('.mini-grid div')
     // different method but accomplishes the same thing as 'array from'
     const displayWidth = 4
-    let displayIndex = 0
+    const displayIndex = 0
 
     const upNextTetrominoes = [ // since its a preview, we only care for rotation 0.    
         [1, displayWidth + 1, displayWidth * 2 + 1, 2], // lTetromino
