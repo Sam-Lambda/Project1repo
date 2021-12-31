@@ -86,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // here they are in beginning positions, but in the function they will be changed.
     let currentPosition = 4  //where first tetromino starts
     let currentRotation = 0
-    //let current = theTetrominoes[0][0]
+
+    //console.log(theTetrominoes[0][0])
 
     // randomly select tetromino with its first rotation.
     let random = Math.floor(Math.random() * theTetrominoes.length)
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (key == 40) {
             moveDown()
         }
-        if (key == 68) {
+        if (key == 32) { // spacebar
             dropDown()
         }
     }
@@ -141,7 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // function to operate the fall of tetromino pieces
     function moveDown() {
         undraw()
-        currentPosition += width //goes down one line
+        if (!(current.some(index => squares[currentPosition + index + width].classList.contains('taken')))) {
+            currentPosition += width //goes down one line
+        }
         draw() // it goes down, but we must limit the grid so it doesn't clip out
         freeze() //invoking to check condition every second
     }
@@ -203,9 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function dropDown() {
-        undraw() // if it is not taken, drop down more
+        undraw()
         while (!(current.some(index => squares[currentPosition + index + width].classList.contains('taken')))) {
-            moveDown()
+            currentPosition += width //goes down one line
         }
         draw()
     }
@@ -285,19 +288,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function gameOver() {
-        if (current.some(index => squares[currentPosition + index].classlist.contains('taken'))) {
+        if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             scoreDisplay.innerHTML = 'end'
             clearInterval(timerId)
         }
     }
-
-
-
-
-
-
-
-
-
-
 })
