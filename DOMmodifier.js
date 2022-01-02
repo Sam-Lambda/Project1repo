@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //drawing tetrominos
     function draw() {
         current.forEach(index => {
-            squares[currentPosition + index].classList.add('tetromino')
+            squares[currentPosition + index].classList.add('tetromino') // shifting by 4 so we start in the middle
         })
     }
 
@@ -137,9 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dropDown()
         }
     }
-    document.addEventListener('keyup', control) // understand this better
+    document.addEventListener('keyup', control)
 
-    // function to operate the fall of tetromino pieces
+    //go down if possible, recall this updates draw and currentPosition
     function moveDown() {
         undraw()
         if (!(current.some(index => squares[currentPosition + index + width].classList.contains('taken')))) {
@@ -155,10 +155,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
             current.forEach(index => squares[currentPosition + index].classList.add('taken'))
             // immediately show the next tetromino
-            random = nextRandom
+            random = nextRandom // need to change this so it stops updating
             nextRandom = Math.floor(Math.random() * theTetrominoes.length) // again idk if i like this
             current = theTetrominoes[random][currentRotation]
             currentPosition = 4
+            // recall curpos doesn't dictate anything about the tetromino, 
+            // it's simply a tool to set the coords right.
             draw()
             displayShape()
             addScore()
@@ -187,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //edge case
         const isAtRightEdge = current.some(index => (currentPosition + index) % width === (width - 1))
         if (!isAtRightEdge) currentPosition += 1
+        //console.log(currentPosition)
 
         if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition -= 1
@@ -197,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ///FIX ROTATION OF TETROMINOS A THE EDGE 
     function isAtRight() {
+        console.log(currentPosition)
         return current.some(index => (currentPosition + index + 1) % width === 0)
     }
 
@@ -231,13 +235,14 @@ document.addEventListener('DOMContentLoaded', () => {
         draw()
     }
 
-    function dropDown() {
+    function dropDown() { //atm this stops the timer, fix that
         undraw()
         while (!(current.some(index => squares[currentPosition + index + width].classList.contains('taken')))) {
             currentPosition += width //goes down one line
         }
         draw()
         freeze()
+        timerId = setInterval(moveDown, 1000) //fixed timer stopping
     }
 
     const displaySquares = document.querySelectorAll('.mini-grid div')
