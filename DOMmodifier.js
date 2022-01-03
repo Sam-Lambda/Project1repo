@@ -321,8 +321,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function gameOver() {
         if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
-            scoreDisplay.innerHTML = 'end'
+            scoreDisplay.innerHTML = ""+score+" Game over."
             clearInterval(timerId)
         }
+        //generate grey area
     }
 })

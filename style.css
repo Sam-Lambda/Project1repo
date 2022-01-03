@@ -21,6 +21,10 @@
     background-color: grey;
 }
 
+.ghost {
+    background-color: rgba(128, 128, 128, 0.87);
+}
+
 
 .mini-grid {
     margin-left: 50px;
