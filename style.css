@@ -2,8 +2,11 @@
     display: flex;
 }
 
+.ghost {
+    background-color: rgba(128, 128, 128, 0.85);
+}
 
-.grid { /* referencing our div class */
+#grid {
  width: 200px;
  height: 400px;
  display: flex;
@@ -11,22 +14,16 @@
  background-color: black;
 }
 
-.grid div{
+#grid div{
  height: 20px;
  width: 20px;
- /* background-color: red; */
 }
 
 .tetromino {
     background-color: grey;
 }
 
-.ghost {
-    background-color: rgba(128, 128, 128, 0.87);
-}
-
-
-.mini-grid {
+#mini-grid {
     margin-left: 50px;
     width: 80px;
     height: 80px;
@@ -35,7 +32,8 @@
     background-color: black;
 }
 /*what are the differences between these two?*/
-.mini-grid div {
+#mini-grid div {
     height: 20px;
     width: 20px;
+    background-color: blue;
 }

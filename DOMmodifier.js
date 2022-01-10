@@ -1,9 +1,11 @@
 /* client-side */
 
 document.addEventListener('DOMContentLoaded', () => {
-    let body = document.getElementsByTagName('body')[0];
+    console.log("loaded")
+    //let body = document.getElementsByTagName('body')[0];
 
-    let gridDiv = document.getElementsByClassName('grid')[0];
+    //let gridDiv = document.getElementsByClassName('grid')[0];
+    let gridDiv = document.getElementById('grid')
 
     for (let i = 0; i < 200; i++) {
         gridDiv.appendChild(document.createElement("div"));
@@ -17,19 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
         gridDiv.appendChild(takenDiv);
     }
 
-    let miniGridDiv = document.getElementsByClassName('mini-grid')[0];
+    //let miniGridDiv = document.getElementsByClassName('mini-grid')[0];
+    let miniGridDiv = document.getElementById('mini-grid')
     // displaying the next tetromino
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 16; i++) {
         miniGridDiv.appendChild(document.createElement("div"));
     }
 
     const scoreDisplay = document.querySelector('#score')
     const startBtn = document.querySelector('#start-button')
     // referencing the variables we made in html body
-    const grid = document.querySelector('.grid')
+    const grid = document.querySelector('#grid')
     // looks through our html doc and finds the el with classname grid
     // so anything that happens to grid will happen to grid in html file
-    let squares = Array.from(document.querySelectorAll('.grid div'))
+    let squares = Array.from(document.querySelectorAll('#grid div'))
     // this collects all the divs in our grid
     // now each div will have a specific index number (why? oh arrays lol)
 
@@ -82,7 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
 
     const theTetrominoes = [lTetromino, zTetromino, tTetromino, oTetromino, iTetromino]
-
+    let bag = []
+    createRandomBag()
+    console.log(bag)
+    function createRandomBag() {
+        for (let i = 0; i < theTetrominoes.length; i++) {
+            bag.push(i)
+        }
+    }
     // here they are in beginning positions, but in the function they will be changed.
     let currentPosition = 4  //where first tetromino starts
     let currentRotation = 0
@@ -90,16 +100,31 @@ document.addEventListener('DOMContentLoaded', () => {
     //console.log(theTetrominoes[0][0])
 
     // randomly select tetromino with its first rotation.
-    let random = Math.floor(Math.random() * theTetrominoes.length)
+    //let random = Math.floor(Math.random() * theTetrominoes.length)
     // I don't think I like this method of randomness?
 
+    //new method
+    function generatePieceIndex() {
+        let random = Math.floor(Math.random() * bag.length)
+        let piece = bag[random]
+        bag.splice(random, 1)
+        if (bag.length == 0) {
+            createRandomBag()
+        }
+        return piece
+    }
+
+    let random = generatePieceIndex()
     let current = theTetrominoes[random][currentRotation]
     // first tetromino with its first rotation in the array
-
+    let finalPosition = currentPosition
+	keepTrack()
+	
     //drawing tetrominos
     function draw() {
         current.forEach(index => {
             squares[currentPosition + index].classList.add('tetromino') // shifting by 4 so we start in the middle
+            squares[finalPosition + index].classList.add('ghost')
         })
     }
 
@@ -111,8 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function undraw() {
         current.forEach(index => {
             squares[currentPosition + index].classList.remove('tetromino')
+            squares[finalPosition + index].classList.remove('ghost')
         })
     } // remove div from grid
+
+    function keepTrack() {
+		finalPosition = currentPosition
+        while (!(current.some(index => squares[finalPosition + index + width].classList.contains('taken')))) {
+            finalPosition += width //goes down one line
+        }
+    }
+
 
     // the time with which the tetromino move (fall) down, is, every second.
     // timerId = setInterval(moveDown, 1000) //where is this even used though?
@@ -137,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dropDown()
         }
     }
-    document.addEventListener('keyup', control)
+    document.addEventListener('keydown', control)
 
     //go down if possible, recall this updates draw and currentPosition
     function moveDown() {
@@ -156,9 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
             current.forEach(index => squares[currentPosition + index].classList.add('taken'))
             // immediately show the next tetromino
             random = nextRandom // need to change this so it stops updating
-            nextRandom = Math.floor(Math.random() * theTetrominoes.length) // again idk if i like this
+            nextRandom = generatePieceIndex() // again idk if i like this
             current = theTetrominoes[random][currentRotation]
             currentPosition = 4
+			keepTrack()
             // recall curpos doesn't dictate anything about the tetromino, 
             // it's simply a tool to set the coords right.
             draw()
@@ -180,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPosition += 1
         }
 
+		keepTrack()
         draw()
     }
 
@@ -194,13 +230,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
             currentPosition -= 1
         }
-
+		
+		keepTrack()
         draw()
     }
 
     ///FIX ROTATION OF TETROMINOS A THE EDGE 
     function isAtRight() {
-        console.log(currentPosition)
+        //console.log(currentPosition)
         return current.some(index => (currentPosition + index + 1) % width === 0)
     }
 
@@ -232,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         current = theTetrominoes[random][currentRotation]
         checkRotatedPosition()
+        keepTrack()
         draw()
     }
 
@@ -242,10 +280,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         draw()
         freeze()
-        timerId = setInterval(moveDown, 1000) //fixed timer stopping
+        //timerId = setInterval(moveDown, 1000) //fixed timer stopping
     }
 
-    const displaySquares = document.querySelectorAll('.mini-grid div')
+    const displaySquares = document.querySelectorAll('#mini-grid div')
     // different method but accomplishes the same thing as 'array from'
     const displayWidth = 4
     const displayIndex = 0
@@ -307,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.forEach(index => {
                     squares[index].classList.remove('taken')
                     squares[index].classList.remove('tetromino')
+                    squares[index].classList.remove('ghost')
                 })
                 const squaresRemoved = squares.splice(i, width)
                 // start index i, splice everything up to width.
@@ -321,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function gameOver() {
         if (current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
-            scoreDisplay.innerHTML = ""+score+" Game over."
+            scoreDisplay.innerHTML = "" + score + " Game over."
             clearInterval(timerId)
         }
         //generate grey area
